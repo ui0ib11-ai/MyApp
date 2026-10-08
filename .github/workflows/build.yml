@@ -1,4 +1,4 @@
-name: Build IRAQ APK
+name: Build Android APK
 
 on:
   workflow_dispatch:
@@ -8,43 +8,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get project files
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Android
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK
-        run: |
-          yes | sdkmanager --licenses > /dev/null || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
-
-      - name: Setup Gradle
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.10.2'
-
-      - name: Extract IRAQ project
-        run: |
-          unzip -q IRAQ_Android_Project_v1.zip -d project
-
-      - name: Update Android Gradle Plugin
-        run: |
-          sed -i "s/8.5.2/8.8.2/g" project/IRAQ_App/build.gradle
+          gradle-version: '8.9'
 
       - name: Build APK
-        run: |
-          cd project/IRAQ_App
-          gradle assembleDebug --no-daemon
+        run: gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: IRAQ-debug-apk
-          path: project/IRAQ_App/app/build/outputs/apk/debug/app-debug.apk
+          name: MyPlayer-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
